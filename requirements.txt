@@ -1,6 +1,6 @@
 Gunicorn
-Flask==2.1.4
-Pillow==8.4.0
-opencv-python==4.5.3.56
-numpy==1.21.3
-scipy==1.7.3
+Flask
+Pillow
+opencv-python
+numpy
+scipy
