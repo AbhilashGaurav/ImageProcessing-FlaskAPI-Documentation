@@ -88,5 +88,5 @@ def process_image():
     except Exception as e:
         return jsonify({'error': f'Error processing image: {str(e)}'}), 500
 
-if __name__ == '__main__':
-    app.run(debug=True)
+# if __name__ == '__main__':
+#     app.run(debug=True)
