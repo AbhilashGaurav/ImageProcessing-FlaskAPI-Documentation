@@ -5,9 +5,9 @@ import base64
 import cv2
 import numpy as np
 from scipy.ndimage import gaussian_filter
-
+from flask_cors import CORS
 app = Flask(__name__)
-
+CORS(app)
 def preprocess_image(image):
     # Convert the PIL Image to a NumPy array
     image = np.array(image)
