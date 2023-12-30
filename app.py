@@ -6,8 +6,10 @@ import cv2
 import numpy as np
 from scipy.ndimage import gaussian_filter
 from flask_cors import CORS
+from flasgger import Swagger
 app = Flask(__name__)
 CORS(app)
+swagger = Swagger(app)
 def preprocess_image(image):
     # Convert the PIL Image to a NumPy array
     image = np.array(image)
@@ -62,6 +64,43 @@ def preprocess_image(image):
 
 @app.route('/process_image', methods=['POST'])
 def process_image():
+    """
+    Process an image and return the result.
+
+    ---
+    parameters:
+      - name: image
+        in: formData
+        type: file
+        required: true
+        description: The image file to be processed.
+
+    responses:
+      200:
+        description: Successfully processed the image.
+        schema:
+          properties:
+            success:
+              type: boolean
+              description: Whether the processing was successful.
+            processed_image:
+              type: string
+              description: Base64-encoded processed image data.
+      400:
+        description: Bad Request. No image provided in the request body.
+        schema:
+          properties:
+            error:
+              type: string
+              description: Error message.
+      500:
+        description: Internal Server Error. Error processing the image.
+        schema:
+          properties:
+            error:
+              type: string
+              description: Error message.
+    """
     try:
         # Check if the request contains image data
         if 'image' not in request.json:
