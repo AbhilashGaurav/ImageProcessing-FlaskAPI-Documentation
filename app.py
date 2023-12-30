@@ -103,17 +103,14 @@ def process_image():
     """
     try:
         # Check if the request contains image data
-        if 'image' not in request.json:
+        if 'image' not in request.files:
             return jsonify({'error': 'No image provided in the request body'}), 400
 
         # Get the image data from the request
-        image_data_base64 = request.json['image']
-
-        # Convert base64-encoded image data to binary
-        image_data_binary = base64.b64decode(image_data_base64)
+        image_file = request.files['image']
 
         # Open the image using Pillow (PIL)
-        img = Image.open(BytesIO(image_data_binary))
+        img = Image.open(image_file)
 
         # Process the image using the preprocess_image function
         processed_image = preprocess_image(img)
