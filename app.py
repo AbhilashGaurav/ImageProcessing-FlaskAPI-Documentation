@@ -84,7 +84,7 @@ def overlay_images(logo_bytes, uploaded_img):
     # Paste the logo onto the background image
     bg.paste(logo, (pos_w, pos_h), logo)
 
-    bg.show()
+    # bg.show()
     # Convert the overlaid image to base64
     overlaid_bytes = BytesIO()
     bg.save(overlaid_bytes, format='PNG')  # Save as PNG to retain transparency
