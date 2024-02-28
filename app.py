@@ -62,6 +62,40 @@ def preprocess_image(image):
 
     return blurred_image
 
+# logo add
+
+def overlay_images(logo_bytes, uploaded_img):
+    # Open the background image
+    bg = Image.open(BytesIO(uploaded_img)).convert("RGBA")
+
+    # Convert the logo bytes to an image object
+    logo = Image.open(BytesIO(logo_bytes)).convert("RGBA")
+
+    Ori_width, Ori_height = bg.size
+    width = int(Ori_width//20)
+    height = int(Ori_height//10)
+    logo= logo.resize((height, width))
+    # logo.show()
+    width,height = logo.size
+    pos_w =  Ori_width-width
+    pos_h =  Ori_height-height
+    # bg.paste(logo,(pos_w,pos_h))
+
+    # Paste the logo onto the background image
+    bg.paste(logo, (pos_w, pos_h), logo)
+
+    bg.show()
+    # Convert the overlaid image to base64
+    overlaid_bytes = BytesIO()
+    bg.save(overlaid_bytes, format='PNG')  # Save as PNG to retain transparency
+    overlaid_bytes.seek(0)
+    base64_image = base64.b64encode(overlaid_bytes.getvalue()).decode()
+    return base64_image
+
+# logo calling for base64 image
+with open("antim.txt", "r") as file:
+    base64_logo = file.read().strip()
+
 @app.route('/process_image', methods=['POST'])
 def process_image():
     """
@@ -118,11 +152,16 @@ def process_image():
         # Convert processed image to base64 for JSON response
         processed_image_base64 = base64.b64encode(cv2.imencode('.png', (processed_image * 255).astype(np.uint8))[1]).decode('utf-8')
 
+        logo = base64.b64decode(base64_logo)
+        bg = base64.b64decode(processed_image_base64)
+        # Call the function to overlay images and get the base64 result
+        base64_result = overlay_images(logo, bg)
         # Return the processed image as a response
-        return jsonify({'success': True, 'processed_image': processed_image_base64})
+        # pr_image = base64.b64encode(cv2.imencode('.png', (base64_result * 255).astype(np.uint8))[1]).decode('utf-8')
+        return jsonify({'success': True, 'processed_image': base64_result})
     
     except Exception as e:
         return jsonify({'error': f'Error processing image: {str(e)}'}), 500
 
-# if __name__ == '__main__':
-#     app.run(debug=True)
+if __name__ == '__main__':
+    app.run(debug=True)
